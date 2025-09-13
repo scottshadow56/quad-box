@@ -41,6 +41,9 @@
   <label class="text-base">N-back: {$gameSettings.nBack}
     <input type="range" min="1" max="12" bind:value={$gameSettings.nBack} class="range" />
   </label>
+  <label class="text-base">Variable-N: {$gameSettings.variable}
+    <input type="checkbox" bind:checked={$gameSettings.variable} class="checkbox" />
+  </label>
 </div>
 {#if 'trialTime' in $gameSettings}
 <div class="flex flex-col gap-1">

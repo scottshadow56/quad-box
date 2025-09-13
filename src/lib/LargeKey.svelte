@@ -6,6 +6,7 @@
   export let display = ''
   export let isPlaying = false
   export let checkForMatch
+  export let n
   $: score = $scores[field]
   $: hotkeyField = field === 'shapeColor' ? 'shape' : field
 </script>
@@ -18,5 +19,5 @@
     <span class="text-xl">{(score.percent * 100).toFixed(0)}%</span>
     {/if}
   </div>
-  {$settings.hotkeys[hotkeyField]}
+  {$settings.hotkeys[hotkeyField]}:{n}
 </button>

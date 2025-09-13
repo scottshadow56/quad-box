@@ -48,6 +48,7 @@ $: gameSettings = $settings.gameSettings[$settings.mode]
 $: game = generateGame(gameSettings, $settings, gameId)
 $: applyGame(game, $isPlaying)
 $: trialDisplay = $settings.feedback === 'show' ? game.trials.length - trialsIndex : ''
+// $: nCurrentDisplay = game.trials[trialsIndex].nVariable || console.dir(game)
 
 const playTrial = async (i) => {
   if (!$isPlaying) {
@@ -215,6 +216,8 @@ onDestroy(async () => {
 <div class="stretch grid grid-rows-[1fr_7fr_2fr] md:grid-rows-[1fr_8fr_2fr] gap-1">
   <div class="w-full h-full flex items-center justify-between row-start-1 p-8">
     <div class="text-4xl ml-2 select-none opacity-30" >{trialDisplay}</div>
+    <!-- <div class="text-4xl ml-2 select-none opacity-100" >{nCurrentDisplay}</div> -->
+
     <button class="game-button text-4xl p-8 md:p-10" 
       on:click={toggleGame}
       on:keydown={suppressKey}
@@ -224,11 +227,11 @@ onDestroy(async () => {
     >{#if $isPlaying} Stop {:else} Play {/if}</button>
   </div>
   <div class="grid grid-cols-[repeat(auto-fit,minmax(0,1fr))] grid-rows-1 max-w-full gap-1 row-start-3 md:mt-6">
-    <SmallKey field="position" display="Position" {$isPlaying} {checkForMatch}></SmallKey>
-    <SmallKey field="color" display="Color" {$isPlaying} {checkForMatch}></SmallKey>
-    <SmallKey field="shape" display="Shape" {$isPlaying} {checkForMatch}></SmallKey>
-    <SmallKey field="shapeColor" display="Pattern" {$isPlaying} {checkForMatch}></SmallKey>
-    <SmallKey field="audio" display="Audio" {$isPlaying} {checkForMatch}></SmallKey>
+    <SmallKey field="position" display="Position" n={game.trials[trialsIndex].nVariable[0]} {$isPlaying} {checkForMatch}></SmallKey>
+    <SmallKey field="color" display="Color" n={game.trials[trialsIndex].nVariable[3]} {$isPlaying} {checkForMatch}></SmallKey>
+    <SmallKey field="shape" display="Shape" n={game.trials[trialsIndex].nVariable[2]} {$isPlaying} {checkForMatch}></SmallKey>
+    <SmallKey field="shapeColor" display="Pattern" n={game.trials[trialsIndex].nVariable[2]} {$isPlaying} {checkForMatch}></SmallKey>
+    <SmallKey field="audio" display="Audio" n={game.trials[trialsIndex].nVariable[1]} {$isPlaying} {checkForMatch}></SmallKey>
   </div>
 </div>
 {:else}
@@ -245,17 +248,17 @@ onDestroy(async () => {
   </div>
   <div class="game-button-lg-group row-start-2 col-start-1 pr-24">
     {#if !gameSettings.enableShapeColor}
-    <LargeKey field="color" display="Color" {$isPlaying} {checkForMatch}></LargeKey>
+    <LargeKey field="color" display="Color" n={game.trials[trialsIndex].nVariable[3]} {$isPlaying} {checkForMatch}></LargeKey>
     {/if}
-    <LargeKey field="position" display="Position" {$isPlaying} {checkForMatch}></LargeKey>
+    <LargeKey field="position" display="Position" n={game.trials[trialsIndex].nVariable[0]} {$isPlaying} {checkForMatch}></LargeKey>
   </div>
   <div class="game-button-lg-group row-start-2 col-start-4 pl-24">
     {#if gameSettings.enableShapeColor}
-    <LargeKey field="shapeColor" display="Pattern" {$isPlaying} {checkForMatch}></LargeKey>
+    <LargeKey field="shapeColor" display="Pattern" n={game.trials[trialsIndex].nVariable[2]} {$isPlaying} {checkForMatch}></LargeKey>
     {:else}
-    <LargeKey field="shape" display="Shape" {$isPlaying} {checkForMatch}></LargeKey>
+    <LargeKey field="shape" display="Shape" n={game.trials[trialsIndex].nVariable[2]} {$isPlaying} {checkForMatch}></LargeKey>
     {/if}
-    <LargeKey field="audio" display="Audio" {$isPlaying} {checkForMatch}></LargeKey>
+    <LargeKey field="audio" display="Audio" n={game.trials[trialsIndex].nVariable[1]} {$isPlaying} {checkForMatch}></LargeKey>
   </div>
   <div class="w-full h-full flex items-center justify-center text-6xl ml-6 row-start-3 col-start-4 select-none opacity-30">{trialDisplay}</div>
 </div>
