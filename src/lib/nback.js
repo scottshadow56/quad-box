@@ -49,7 +49,7 @@ const generateMatches = (trials, nBack, matchChance) => {
   return prefixMatches.concat(matches)
 }
 
-const generateStimuli = (trials, tags, types, stimulusPool, nBack, matchChance, interference, sequence, varyingN = false) => {
+const generateStimuli = (trials, tags, types, stimulusPool, nBack, matchChance, interference, sequence, varyingN = false, randomSeed) => {
   for (const type of types) {
     if (!tags.includes(type)) {
       tags.push(type)
@@ -73,7 +73,7 @@ const generateStimuli = (trials, tags, types, stimulusPool, nBack, matchChance, 
       let banned = otherTypes.map(otherType => trials[i][otherType]).filter(stimulus => stimulus)
       let pool = stimulusPool.filter(stimulus => !banned.includes(stimulus))
       const tempN = nBack
-      const randomN = 1 + Math.round(Math.random() * (nBack - 1))
+      const randomN = 1 + Math.round(randomSeed[i] * (nBack - 1))
 
 
       if (varyingN === true) nBack = randomN
@@ -127,11 +127,11 @@ const generateSingleWidthStimuli = (trials, tags, { nBack, enableAudio, enableSh
 }
 
 export const generateGame = (settings, globalSettings) => {
-  const randomSeed = Math.random()
+  // const randomSeed = Math.random()
   const { nBack, numTrials, trialTime, enableAudio, enableShape, enableColor, enableShapeColor, matchChance, interference, variable } = settings
   let trials = new Array(numTrials).fill().map(() => ({ matches: [], answers: {}, nVariable: [] }))
   let tags = []
-  console.log(settings)
+  let randomSeed = new Array(numTrials).fill().map(() => Math.random())
   generateStimuli(trials, tags, ['position'], getPositionPool(settings), nBack, matchChance, interference, null, variable, randomSeed)
   generateSingleWidthStimuli(trials, tags, settings, globalSettings, variable, randomSeed)
   let title = tags.join('-')
