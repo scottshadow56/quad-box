@@ -73,7 +73,7 @@ const generateStimuli = (trials, tags, types, stimulusPool, nBack, matchChance, 
       let banned = otherTypes.map(otherType => trials[i][otherType]).filter(stimulus => stimulus)
       let pool = stimulusPool.filter(stimulus => !banned.includes(stimulus))
       const tempN = nBack
-      const randomN = 1 + Math.round(randomSeed[i] * (nBack - 1))
+      const randomN = (randomSeed[i][0] > 0.35 ? Math.floor(nBack/2) : 1)+ Math.round(randomSeed[i][1] * (nBack - 1))
 
 
       if (varyingN === true) nBack = randomN
