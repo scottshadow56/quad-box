@@ -131,7 +131,7 @@ export const generateGame = (settings, globalSettings) => {
   const { nBack, numTrials, trialTime, enableAudio, enableShape, enableColor, enableShapeColor, matchChance, interference, variable } = settings
   let trials = new Array(numTrials).fill().map(() => ({ matches: [], answers: {}, nVariable: [] }))
   let tags = []
-  let randomSeed = new Array(numTrials).fill().map(() => Math.random())
+  let randomSeed = new Array(numTrials).fill().map([() => Math.random(),() => Math.random()]) 
   generateStimuli(trials, tags, ['position'], getPositionPool(settings), nBack, matchChance, interference, null, variable, randomSeed)
   generateSingleWidthStimuli(trials, tags, settings, globalSettings, variable, randomSeed)
   let title = tags.join('-')
