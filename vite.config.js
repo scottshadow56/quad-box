@@ -9,4 +9,10 @@ export default defineConfig({
     svelte(),
   ],
   base: process.env.BASE_PATH || './',
+  server: {
+    host: '0.0.0.0', // This is often necessary for Replit to work correctly
+    allowedHosts: [
+      'quad-box-production.up.railway.app'
+    ]
+  }
 })
