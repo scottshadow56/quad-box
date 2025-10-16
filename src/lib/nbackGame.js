@@ -105,7 +105,7 @@ export class NBackGame {
 }
   generateNSequence() {
     if (this.rules === 'variable') {
-      return new Array(this.numTrials).fill().map(this.getRandomUniformNumber(this.nBack)) 
+      return new Array(this.numTrials).fill().map(() => this.getRandomUniformNumber(this.nBack)) 
     } else {
       return new Array(this.numTrials).fill(this.nBack)
     }
