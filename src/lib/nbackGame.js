@@ -90,7 +90,7 @@ export class NBackGame {
  getRandomUniformNumber(n) {
     // Helper to check if a number i is a proper divisor of n (excluding 1)
     const isExcluded = (n, i) => {
-        return i > 1 && n !== i && n % i === 0;
+        return i > 1 && n > i && n % i === 0;
     };
 
     let result;
