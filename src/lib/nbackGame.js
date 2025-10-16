@@ -87,10 +87,25 @@ export class NBackGame {
       return 'custom'
     }
   }
+ getRandomUniformNumber(n) {
+    // Helper to check if a number i is a proper divisor of n (excluding 1)
+    const isExcluded = (n, i) => {
+        return i > 1 && n % i === 0;
+    };
 
+    let result;
+    
+    // Keep generating a new random number until one is found that is NOT excluded.
+    do {
+        // Generate a random integer from 1 to n (inclusive)
+        result = Math.floor(Math.random() * n) + 1;
+    } while (isExcluded(n, result));
+
+    return result;
+}
   generateNSequence() {
     if (this.rules === 'variable') {
-      return new Array(this.numTrials).fill().map(() => Math.floor(Math.pow(this.random(), this.random() < 0.5 ? 0.25 : 0.6) * this.nBack) + 1)
+      return new Array(this.numTrials).fill().map(this.getRandomUniformNumber(this.nBack)
     } else {
       return new Array(this.numTrials).fill(this.nBack)
     }
