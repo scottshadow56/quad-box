@@ -59,6 +59,12 @@ export const ICONS_A_POOL = [
   'full_lucide_command',
   'full_domestika',
   'full_mbills',
+  'big_lightbulb',
+  'big_stairs',
+  'big_parent',
+  'big_alarm',
+  'big_brush',
+  'big_gate',
 ]
 
 export const ICONS_B_POOL = [
@@ -86,7 +92,12 @@ export const ICONS_B_POOL = [
   'full_cherrygram',
   'full_life_fits_into_home',
   'full_meditation_assistant_alt',
-  'full_functiongenerator'
+  'full_functiongenerator',
+  'big_cake',
+  'big_beer',
+  'big_plant',
+  'big_camera',
+  'big_planet',
 ]
 
 export const ALL_SHAPES_POOL = [ ...SHAPE_POOL, ...TETRIS_POOL, ...ICONS_A_POOL, ...ICONS_B_POOL ]
@@ -129,33 +140,99 @@ export const NUMBER_AUDIO_POOL = [
   `${NATURAL_PATH}8`,
 ]
 
-const LETTERS_PATH = "Letters/"
-export const LETTER_AUDIO_POOL = [
-  `${LETTERS_PATH}b`,
-  `${LETTERS_PATH}c`,
-  `${LETTERS_PATH}g`,
-  `${LETTERS_PATH}i`,
-  `${LETTERS_PATH}j`,
-  `${LETTERS_PATH}m`,
-  `${LETTERS_PATH}l`,
-  `${LETTERS_PATH}t`,
-  `${LETTERS_PATH}k`,
+const LETTERS_M1_PATH = "LettersM1/"
+export const LETTER_M1_AUDIO_POOL = [
+ `${LETTERS_M1_PATH}a`,
+ `${LETTERS_M1_PATH}d`,
+ `${LETTERS_M1_PATH}g`,
+ `${LETTERS_M1_PATH}i`,
+ `${LETTERS_M1_PATH}k`,
+ `${LETTERS_M1_PATH}m`,
+ `${LETTERS_M1_PATH}o`,
+ `${LETTERS_M1_PATH}s`,
+ `${LETTERS_M1_PATH}z`,
+ `${LETTERS_M1_PATH}b`,
+ `${LETTERS_M1_PATH}e`,
+ `${LETTERS_M1_PATH}j`,
 ]
 
-const LETTERS_2_PATH = "Letters2/"
-export const LETTER_2_AUDIO_POOL = [
- `${LETTERS_2_PATH}a`,
- `${LETTERS_2_PATH}d`,
- `${LETTERS_2_PATH}g`,
- `${LETTERS_2_PATH}i`,
- `${LETTERS_2_PATH}k`,
- `${LETTERS_2_PATH}m`,
- `${LETTERS_2_PATH}o`,
- `${LETTERS_2_PATH}s`,
- `${LETTERS_2_PATH}z`,
- `${LETTERS_2_PATH}b`,
- `${LETTERS_2_PATH}e`,
- `${LETTERS_2_PATH}j`,
+const LETTERS_M2_PATH = "LettersM2/"
+export const LETTER_M2_AUDIO_POOL = [
+  `${LETTERS_M2_PATH}a`,
+  `${LETTERS_M2_PATH}c`,
+  `${LETTERS_M2_PATH}d`,
+  `${LETTERS_M2_PATH}e`,
+  `${LETTERS_M2_PATH}h`,
+  `${LETTERS_M2_PATH}i`,
+  `${LETTERS_M2_PATH}j`,
+  `${LETTERS_M2_PATH}k`,
+  `${LETTERS_M2_PATH}l`,
+  `${LETTERS_M2_PATH}m`,
+  `${LETTERS_M2_PATH}p`,
+  `${LETTERS_M2_PATH}q`,
+  `${LETTERS_M2_PATH}t`,
+  `${LETTERS_M2_PATH}u`,
+  `${LETTERS_M2_PATH}v`,
+]
+
+const LETTERS_F1_PATH = "LettersF1/"
+export const LETTER_F1_AUDIO_POOL = [
+  `${LETTERS_F1_PATH}a`,
+  `${LETTERS_F1_PATH}b`,
+  `${LETTERS_F1_PATH}c`,
+  `${LETTERS_F1_PATH}d`,
+  `${LETTERS_F1_PATH}e`,
+  `${LETTERS_F1_PATH}f`,
+  `${LETTERS_F1_PATH}g`,
+  `${LETTERS_F1_PATH}h`,
+  `${LETTERS_F1_PATH}i`,
+  `${LETTERS_F1_PATH}j`,
+  `${LETTERS_F1_PATH}k`,
+  `${LETTERS_F1_PATH}l`,
+  `${LETTERS_F1_PATH}n`,
+  `${LETTERS_F1_PATH}o`,
+  `${LETTERS_F1_PATH}p`,
+  `${LETTERS_F1_PATH}q`,
+  `${LETTERS_F1_PATH}r`,
+  `${LETTERS_F1_PATH}s`,
+  `${LETTERS_F1_PATH}t`,
+  `${LETTERS_F1_PATH}u`,
+  `${LETTERS_F1_PATH}w`,
+  `${LETTERS_F1_PATH}x`,
+  `${LETTERS_F1_PATH}y`,
+  `${LETTERS_F1_PATH}z`,
+]
+
+const LETTERS_F2_PATH = "LettersF2/"
+export const LETTER_F2_AUDIO_POOL = [
+  `${LETTERS_F2_PATH}a`,
+  `${LETTERS_F2_PATH}b`,
+  `${LETTERS_F2_PATH}c`,
+  `${LETTERS_F2_PATH}d`,
+  `${LETTERS_F2_PATH}f`,
+  `${LETTERS_F2_PATH}g`,
+  `${LETTERS_F2_PATH}k`,
+  `${LETTERS_F2_PATH}l`,
+  `${LETTERS_F2_PATH}m`,
+  `${LETTERS_F2_PATH}p`,
+  `${LETTERS_F2_PATH}q`,
+  `${LETTERS_F2_PATH}r`,
+  `${LETTERS_F2_PATH}x`,
+  `${LETTERS_F2_PATH}y`,
+  `${LETTERS_F2_PATH}z`,
+]
+
+const LETTERS_F3_PATH = "LettersF3/"
+export const LETTER_F3_AUDIO_POOL = [
+  `${LETTERS_F3_PATH}b`,
+  `${LETTERS_F3_PATH}c`,
+  `${LETTERS_F3_PATH}g`,
+  `${LETTERS_F3_PATH}i`,
+  `${LETTERS_F3_PATH}j`,
+  `${LETTERS_F3_PATH}m`,
+  `${LETTERS_F3_PATH}l`,
+  `${LETTERS_F3_PATH}t`,
+  `${LETTERS_F3_PATH}k`,
 ]
 
 const NATO_PATH = "Nato/"
@@ -241,7 +318,15 @@ export const SYL_10_AUDIO_POOL = [
 export const getAudioPool = (audioSource) => {
   switch (audioSource) {
     case 'letters':
-      return LETTER_AUDIO_POOL
+      return LETTER_F3_AUDIO_POOL
+    case 'letters2':
+      return LETTER_M1_AUDIO_POOL
+    case 'letters3':
+      return LETTER_M2_AUDIO_POOL
+    case 'letters4':
+      return LETTER_F2_AUDIO_POOL
+    case 'letters5':
+      return LETTER_F1_AUDIO_POOL
     case 'numbers':
       return NUMBER_AUDIO_POOL
     case 'nato':
@@ -251,7 +336,7 @@ export const getAudioPool = (audioSource) => {
     case 'syl10':
       return SYL_10_AUDIO_POOL
     default:
-      return LETTER_2_AUDIO_POOL
+      return LETTER_M1_AUDIO_POOL
   }
 }
 

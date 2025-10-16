@@ -61,8 +61,11 @@
   const range = (n) => Array.from({ length: n }, (_, i) => i)
 
   const audioOptions = new Map([
-    ['letters2','Letters A'],
-    ['letters','Letters B'],
+    ['letters2','Letters M1'],
+    ['letters3','Letters M2'],
+    ['letters5','Letters F1'],
+    ['letters4','Letters F2'],
+    ['letters','Letters F3'],
     ['numbers','Numbers'],
     ['nato','NATO'],
     ['syl5','5 syllables'],
