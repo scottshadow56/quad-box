@@ -99,7 +99,7 @@ export class NBackGame {
     do {
         // Generate a random integer from 1 to n (inclusive)
         result = Math.floor(
-            Math.pow(random(), random() < 0.5 ? 0.25 : 0.6) * nBack) + 1;
+            Math.pow(random(), random() < 0.5 ? 0.25 : 0.6) * this.nBack) + 1;
     } while (isExcluded(n, result));
 
     return result;
