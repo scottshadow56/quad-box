@@ -98,7 +98,8 @@ export class NBackGame {
     // Keep generating a new random number until one is found that is NOT excluded.
     do {
         // Generate a random integer from 1 to n (inclusive)
-        result = Math.floor(Math.random() * n) + 1;
+        result = Math.floor(
+            Math.pow(random(), random() < 0.5 ? 0.25 : 0.6) * nBack) + 1;
     } while (isExcluded(n, result));
 
     return result;
