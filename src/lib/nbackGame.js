@@ -94,7 +94,7 @@ export class NBackGame {
     };
 
     let result;
-    
+    const random = () => Math.random();
     // Keep generating a new random number until one is found that is NOT excluded.
     do {
         // Generate a random integer from 1 to n (inclusive)
