@@ -2,6 +2,7 @@
   export let trial = {}
   export let nextTrial = {}
   export let presentation = {}
+  export let gameId = 0
   import Cell from "./Cell.svelte"
   import Frame from "./Frame.svelte"
   import { settings } from "../stores/settingsStore"
@@ -9,8 +10,27 @@
   import { gameDisplayInfo } from "../stores/gameRunningStore"
   import { mobile } from "../stores/mobileStore"
   import { cacheNextTrial, createSvgId, findBoxColor, findShapeOuterColor } from "./trialUtils"
+  import { seededRandom } from './utils.js'
 
   const range = (n) => Array.from({ length: n }, (_, i) => i)
+
+
+  const currentRotationRandom = () => {
+    const now = Date.now()
+    const seed = Math.floor(now / 7200000) * 7200000 // 2 hrs * 60 min * 60 sec * 1000 ms
+    const random = seededRandom(seed)
+    return random
+  }
+
+  const determineRotationStart = () => {
+    const random = currentRotationRandom()
+    return {
+      x: (random() * 360).toFixed(2),
+      z: (random() * 360).toFixed(2),
+      y: (random() * 360).toFixed(2),
+    }
+  }
+  const rotationStart = determineRotationStart()
 
   $: rotationTime = (3400 / $settings.rotationSpeed).toFixed(0)
   $: svgId = createSvgId(trial.shape, trial.color, trial.image, $settings)
@@ -62,7 +82,12 @@
 <div class="flex absolute items-center justify-center w-full h-full select-none perspective-[60svmin] overflow-hidden">
   <div class="scene absolute w-[60.3svmin] h-[60.3svmin] transform-3d -translate-z-[10svmin]"
   class:mb-10={$mobile}
-  style="animation-duration: {rotationTime}s;"
+  style="
+  animation-duration: {rotationTime}s;
+  --rotation-start-x: {rotationStart.x}deg;
+  --rotation-start-y: {rotationStart.y}deg;
+  --rotation-start-z: {rotationStart.z}deg;
+  "
   >
     {#if trial.position0}
       {#each range(gameDisplayInfo.getMaxWidth()) as i (i)}
@@ -116,6 +141,17 @@
     }
     100% {
       transform: rotateX(360deg) rotateY(360deg) rotateZ(360deg);
+    }
+  }
+
+  @keyframes spin {
+    from {
+      transform: rotateX(var(--rotation-start-x, 0deg)) rotateY(var(--rotation-start-y, 0deg)) rotateZ(var(--rotation-start-z, 0deg));
+    }
+    to {
+      transform: rotateX(calc(var(--rotation-start-x, 0deg) + 360deg))
+                rotateY(calc(var(--rotation-start-y, 0deg) + 360deg))
+                rotateZ(calc(var(--rotation-start-z, 0deg) + 360deg));
     }
   }
 </style>

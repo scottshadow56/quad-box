@@ -120,6 +120,14 @@ const endGame = async (status) => {
     return
   }
 
+  if (status === 'completed') {
+    try {
+      await delay(100)
+    } catch {
+      // ignore
+    }
+  }
+
   const gameInfoRecord = { ...gameMeta, timestamp: Date.now() }
   if (trialsIndex > gameInfoRecord.nBack) {
     await analytics.scoreTallyTrials(gameInfoRecord, status === 'completed' ? scoresheet : scoresheet.slice(0, trialsIndex), status)
@@ -193,7 +201,7 @@ onDestroy(async () => {
 {#if $settings.mode === 'vtally'}
 <VisualCrank trial={currentTrial} {nextTrial} {presentation} trialIndex={trialsIndex} />
 {:else}
-<Grid trial={currentTrial} {nextTrial} {presentation} />
+<Grid trial={currentTrial} {nextTrial} {presentation} {gameId} />
 {/if}
 <div class="stretch grid grid-cols-[1fr_3fr_3fr_1fr] "
   class:grid-rows-[10fr_70fr_8fr]={!isMobile}
