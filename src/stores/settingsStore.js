@@ -114,6 +114,7 @@ const defaultSettings = {
       imageSource: 'generative',
     },
   },
+  variableISI: false,
   feedback: 'show',
   rotationSpeed: 35,
   enableAutoProgression: true,

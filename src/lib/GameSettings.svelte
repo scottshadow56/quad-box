@@ -5,6 +5,7 @@
   import { Info, Settings } from "@lucide/svelte"
 
   let isShowingNBackSettingsPopup = false
+  let isShowingVariableISISettingsPopup = false
 
   const clampNumber = (field, min, value, max) => {
     if (value < min || max < value) {
@@ -31,10 +32,16 @@
   const toggleNBackSettingsPopup = () => {
     isShowingNBackSettingsPopup = !isShowingNBackSettingsPopup
   }
+    const toggleVariableISISettingsPopup = () => {
+    isShowingVariableISISettingsPopup = !isShowingVariableISISettingsPopup
+  }
 
   const handleClickOutside = (event) => {
-    if (isShowingNBackSettingsPopup && !document.getElementById('nback-settings-popup')?.contains(event.target)) {
+    if ((isShowingNBackSettingsPopup || isShowingVariableISISettingsPopup) && !document.getElementById('nback-settings-popup')?.contains(event.target)) {
       isShowingNBackSettingsPopup = false
+    }
+    if ((isShowingVariableISISettingsPopup) && !document.getElementById('nback-timer-settings-popup')?.contains(event.target)) {
+      isShowingVariableISISettingsPopup = false
     }
   }
 
@@ -43,6 +50,13 @@
       gameSettings.setField('rules', 'variable')
     } else {
       gameSettings.setField('rules', 'none')
+    }
+  }
+    const toggleVariableISI = (event) => {
+    if (event.target.checked) {
+      settings.update('variableISI',true)
+    } else {
+      settings.update('variableISI',false)
     }
   }
 
@@ -118,11 +132,36 @@
   </div>
   {/if}
 </div>
-{#if 'trialTime' in $gameSettings}
-<div class="flex flex-col gap-1">
-  <label class="text-base">Trial time: {$gameSettings.trialTime}ms
-    <input type="range" min="1000" max="5000" bind:value={$gameSettings.trialTime} step="100" class="range" />
+{#if $settings.mode !== 'tally' && $settings.mode !== 'vtally'}
+<div class="flex gap-2 items-center justify-between">
+  <div class="flex flex-col gap-1 flex-auto">
+    <label class="text-base">Trial time: {$gameSettings.trialTime}ms
+    <input type="range" min="700" max="5000" bind:value={$gameSettings.trialTime} step="100" class="range" />
   </label>
+  </div>
+  {#if 'trialTime' in $gameSettings}
+  <div id="nback-timer-settings-popup" class="cursor-pointer relative select-none" on:click={() => toggleVariableISISettingsPopup()}>
+    <div class="relative">
+      {#if $settings.variableISI}
+        <span class="absolute top-0 right-[-0.25rem] z-10 rounded bg-amber-500 w-2 h-2"></span>
+      {/if}
+      <span class="transition-transform" class:rotate-90={isShowingVariableISISettingsPopup}><Settings /></span>
+    </div>
+    {#if isShowingVariableISISettingsPopup}
+    <div class="absolute top-0 right-8 bg-[#020202] border-b-neutral-500 border-2 shadow-lg flex items-center justify-center z-10" on:click={() => toggleVariableISISettingsPopup()}>
+      <div class="p-2 w-40 select-auto" on:click|stopPropagation>
+        <div class="flex flex-col gap-4">
+          <div class="grid grid-cols-[6fr_4fr] items-center gap-4">
+            <label for="variable-isi" class="text-base">Variable Interval Timer:</label>
+            <input id="variable-isi" type="checkbox" checked={$settings.variableISI} on:change={toggleVariableISI} class="toggle" />
+          </div>
+        </div>
+        <p class="mt-4 text-xs">Randomly changes the trial timer each trial</p>
+      </div>
+    </div>
+    {/if}
+  </div>
+  {/if}
 </div>
 {/if}
 <div class="grid grid-cols-[6fr_4fr] items-center gap-4">
