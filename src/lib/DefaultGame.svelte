@@ -65,7 +65,7 @@ const playTrial = async (i) => {
   presentation.highlight = true
   let trialTimeInterval = 0
   if($settings.variableISI){
-  trialTimeInterval = Math.random() > 0.4 ? (Math.random() > 0.3 ? 1500 : 3700) : 2500
+  trialTimeInterval = Math.random() > 0.4 ? (Math.random() > 0.5 ? 2000-(Math.random()*800) : 3000 + (Math.random()*800)) : 2500
   }
   else{
     trialTimeInterval = $gameDisplayInfo.trialTime
