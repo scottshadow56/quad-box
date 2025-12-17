@@ -2,7 +2,7 @@
 
 3D Quad N-Back
 
-Play at https://quad-box.netlify.app
+Play [here](https://quad-box-production.up.railway.app/)
 
 # Development
 ```
