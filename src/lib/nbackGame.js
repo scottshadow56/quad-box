@@ -1,14 +1,15 @@
 import { shuffle, pick } from "./utils.js"
 
 export class NBackGame {
-  constructor(gameSettings, randomFn=Math.random) {
+  constructor(gameSettings, randomFn = Math.random) {
     this.stimuli = new Map()
     this.tallyStimuli = new Map()
     this.gameSettings = gameSettings
+    this.levelProgress = Math.max(0, Math.min(1, gameSettings.levelProgress))
     this.nBack = gameSettings.nBack
     this.numTrials = gameSettings.numTrials
-    this.matchChance = gameSettings.matchChance
-    this.interference = gameSettings.interference
+    this.matchChance = 25 * Math.pow(0.5, this.levelProgress)
+    this.interference = 35 * Math.pow(this.levelProgress, 2)
     this.rules = gameSettings.rules
     this.randomFn = randomFn
   }
@@ -26,7 +27,7 @@ export class NBackGame {
   }
 
   generateGame() {
-    let trials = new Array(this.numTrials).fill().map(() => ({ matches: [] }))
+    let trials = new Array(this.numTrials).fill().map(() => ({ matches: [], lures: [] }))
     let tags = []
     const nSequence = this.generateNSequence()
     if (this.rules === 'variable') {
@@ -47,12 +48,13 @@ export class NBackGame {
     }
 
     let title = this.createTitle(tags)
-    let meta = (({ nBack, numTrials, trialTime, matchChance, interference, rules }) =>
-                  ({ nBack, numTrials, trialTime, matchChance, interference, rules }))(this.gameSettings)
+    let meta = (({ nBack, numTrials, trialTime, matchChance, interference, rules, levelProgress }) =>
+      ({ nBack, numTrials, trialTime, matchChance, interference, rules, levelProgress }))(this.gameSettings)
 
     meta = { ...meta, title, tags }
     if (this.tallyStimuli.size > 0) {
-      meta = { ...meta,
+      meta = {
+        ...meta,
         mode: 'tally',
         positionWidth: this.gameSettings.positionWidth,
         enablePositionWidthSequence: this.gameSettings.enablePositionWidthSequence,
@@ -87,26 +89,26 @@ export class NBackGame {
       return 'custom'
     }
   }
- getRandomUniformNumber(n) {
+  getRandomUniformNumber(n) {
     // Helper to check if a number i is a proper divisor of n (excluding 1)
     const isExcluded = (n, i) => {
-        return i > 1 && n > i && n % i === 0;
+      return i > 1 && n > i && n % i === 0;
     };
 
     let result;
     const random = () => Math.random();
     // Keep generating a new random number until one is found that is NOT excluded.
     do {
-        // Generate a random integer from 1 to n (inclusive)
-        result = Math.floor(
-            Math.pow(random(), random() < 0.5 ? 0.25 : 0.6) * this.nBack) + 1;
+      // Generate a random integer from 1 to n (inclusive)
+      result = Math.floor(
+        Math.pow(random(), random() < 0.5 ? 0.25 : 0.6) * this.nBack) + 1;
     } while (isExcluded(n, result));
 
     return result;
-}
+  }
   generateNSequence() {
     if (this.rules === 'variable') {
-      return new Array(this.numTrials).fill().map(() => this.getRandomUniformNumber(this.nBack)) 
+      return new Array(this.numTrials).fill().map(() => this.getRandomUniformNumber(this.nBack))
     } else {
       return new Array(this.numTrials).fill(this.nBack)
     }
@@ -115,6 +117,7 @@ export class NBackGame {
   generateStimuli(trials, tag, pool, nSequence) {
     const matches = this.generateMatches()
     let stimuli = new Array(trials.length)
+
     for (let i = 0; i < stimuli.length; i++) {
       if (i < this.nBack) {
         trials[i][tag] = pick(pool)
@@ -123,18 +126,23 @@ export class NBackGame {
 
       const n = nSequence[i]
       if (matches[i]) {
-        trials[i][tag] = trials[i-n][tag]
+        trials[i][tag] = trials[i - n][tag]
         trials[i].matches.push(tag)
       } else {
-        const available = pool.filter(stimulus => stimulus !== trials[i-n][tag])
-        let difficultStimuli = [trials[i-n+1][tag]]
-        if (0 <= i-n-1) {
-          difficultStimuli.push(trials[i-n-1][tag])
+        const available = pool.filter(stimulus => stimulus !== trials[i - n][tag])
+
+        // Identify Potential Lures: N-1 and N+1
+        let difficultStimuli = [trials[i - n + 1][tag]]
+        if (0 <= i - n - 1) {
+          difficultStimuli.push(trials[i - n - 1][tag])
         }
         difficultStimuli = difficultStimuli.filter(stimulus => available.includes(stimulus))
         shuffle(difficultStimuli)
+        // Decide if this trial becomes an intentional Lure
         if (this.random() * 100 < this.interference && difficultStimuli.length > 0) {
           trials[i][tag] = difficultStimuli[0]
+          // FLAG THIS AS A LURE
+          trials[i].lures.push(tag)
         } else {
           trials[i][tag] = pick(available)
         }
@@ -168,17 +176,17 @@ export class NBackGame {
           trials[i][tag] = pick(localPool)
           return
         }
-        banned = banned.concat(otherTags.map(otherTag => trials[i-n][otherTag]).filter(stimulus => stimulus))
+        banned = banned.concat(otherTags.map(otherTag => trials[i - n][otherTag]).filter(stimulus => stimulus))
         localPool = localPool.filter(stimulus => !banned.includes(stimulus))
 
         if (matches[i]) {
-          trials[i][tag] = trials[i-n][tag]
+          trials[i][tag] = trials[i - n][tag]
           trials[i].matches.push(tag)
         } else {
-          const available = localPool.filter(stimulus => stimulus !== trials[i-n][tag])
-          let difficultStimuli = [trials[i-n+1][tag]]
-          if (0 <= i-n-1) {
-            difficultStimuli.push(trials[i-n-1][tag])
+          const available = localPool.filter(stimulus => stimulus !== trials[i - n][tag])
+          let difficultStimuli = [trials[i - n + 1][tag]]
+          if (0 <= i - n - 1) {
+            difficultStimuli.push(trials[i - n - 1][tag])
           }
           difficultStimuli = difficultStimuli.filter(stimulus => available.includes(stimulus))
           shuffle(difficultStimuli)

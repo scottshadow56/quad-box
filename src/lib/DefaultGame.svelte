@@ -120,7 +120,7 @@ const endGame = async (status) => {
   if (trialsIndex > gameInfoRecord.nBack) {
     await analytics.scoreTrials(gameInfoRecord, status === 'completed' ? scoresheet : scoresheet.slice(0, trialsIndex), status)
     if (status === 'completed') {
-      await runAutoProgression(gameInfoRecord)
+      await runAutoProgression(gameInfoRecord, scoresheet)
     }
   } else {
     console.debug('Game not recorded', trialsIndex, gameInfoRecord, scoresheet, trials)
@@ -143,11 +143,14 @@ const detectMissedStimuli = () => {
     return
   }
   let updates = {}
+
   for (const tag of $gameDisplayInfo.tags) {
-    if (currentTrial.matches.includes(tag) &&!(tag in scoresheet[trialsIndex])) {
-      scoresheet[trialsIndex][tag] = false
+    // If it WAS a match, but it's NOT in the scoresheet yet, they missed it.
+    if (currentTrial.matches.includes(tag) && !(tag in scoresheet[trialsIndex])) {
+      scoresheet[trialsIndex][tag] = 'miss' // Explicitly mark as miss for stats
       updates[tag] = 'late-failure'
     } else {
+      // Reset visual state for non-active tags
       updates[tag] = 'blank'
     }
   }
@@ -159,10 +162,29 @@ const checkForMatch = (type) => {
     return
   }
 
+  // Only process if we haven't already scored this tag for this trial
   if (type in currentTrial && !(type in scoresheet[trialsIndex])) {
-    const isSuccess = currentTrial.matches.includes(type)
-    scoresheet[trialsIndex][type] = isSuccess
-    feedback.apply({ [type]: isSuccess ? 'success' : 'failure' })
+    
+    // Case 1: It was a Match (HIT)
+    if (currentTrial.matches.includes(type)) {
+      scoresheet[trialsIndex][type] = 'hit'
+      feedback.apply({ [type]: 'success' })
+    
+    // Case 2: It was NOT a match (FALSE ALARM)
+    } else {
+      // Check if this specific type was a flagged "Lure" in your generator
+      const isLure = currentTrial.lures && currentTrial.lures.includes(type)
+      
+      if (isLure) {
+        // User fell for the trap (Interference Failure)
+        scoresheet[trialsIndex][type] = 'lure-fa'
+        feedback.apply({ [type]: 'failure' }) // You could pass 'lure-failure' if you want specific UI feedback
+      } else {
+        // User clicked on random noise (Attention/Impulsivity Failure)
+        scoresheet[trialsIndex][type] = 'random-fa'
+        feedback.apply({ [type]: 'failure' })
+      }
+    }
   }
 }
 

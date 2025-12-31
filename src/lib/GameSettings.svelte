@@ -14,6 +14,20 @@
     gameSettings.setField(field, value)
   }
 
+
+  const Adapt = (p) => {
+    // Clamp p between 0 and 1
+    const progress = Math.max(0, Math.min(1, p));
+
+    // Match Chance: Drops from 25% -> 12.5% (Exponential Decay)
+    gameSettings.setField('matchChance', Math.round(25 * Math.pow(0.5, progress))),
+
+    // Interference: Increases from 0% -> 35% (Power Curve for late-game ramp)
+    gameSettings.setField('interference', Math.round(35 * Math.pow(progress, 2))),
+
+    // Trial Time: Speeds up from 2500ms -> 1500ms (Linear)
+    gameSettings.setField('trialTime', Math.round(2500 - (1000 * progress)))
+  }
   const toggleShapeOrColor = (event, field) => {
     gameSettings.setField(field, event.target.checked)
     if (event.target.value) {
@@ -131,6 +145,11 @@
     {/if}
   </div>
   {/if}
+
+</div>
+<div class="grid grid-cols-[6fr_4fr] items-center gap-4">
+  <label for="num-trials" class="text-base">d' Progression:</label>
+  <input id="num-trials" type="number" min="0" max="1" bind:value={$gameSettings.levelProgress} on:change={() => Adapt($gameSettings.levelProgress)} step="0.05" class="input" />
 </div>
 {#if $settings.mode !== 'tally' && $settings.mode !== 'vtally'}
 <div class="flex gap-2 items-center justify-between">

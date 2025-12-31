@@ -1,5 +1,5 @@
 import { writable } from 'svelte/store'
-import { addGame, getLastRecentGame, getPlayTimeSince4AM  } from '../lib/gamedb'
+import { addGame, getLastRecentGame, getPlayTimeSince4AM } from '../lib/gamedb'
 import { formatSeconds } from '../lib/utils'
 
 const loadAnalytics = async () => {
@@ -27,7 +27,7 @@ const createAnalyticsStore = () => {
       for (const answers of scoresheet) {
         for (const tag of gameInfo.tags) {
           if (tag in answers) {
-            if (answers[tag]) {
+            if (answers[tag] === 'hit') {
               scores[tag].hits++
             } else {
               scores[tag].misses++
