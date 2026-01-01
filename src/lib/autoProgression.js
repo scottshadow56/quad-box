@@ -49,50 +49,78 @@ export const runAutoProgression = async (gameInfo, scoresheet) => {
   let hits = 0;
   let misses = 0;
   let fas = 0; // Combined Lure FAs and Random FAs
-  let totalTrials = 0;
-
+  let nonTargets = 0;
   // Iterate over every trial in the scoresheet
   scoresheet.forEach(trial => {
     if (!trial) return;
     Object.values(trial).forEach(status => {
-      totalTrials++; // Count every stimuli interaction opportunity
       if (status === 'hit') hits++;
       else if (status === 'miss') misses++;
       else if (status === 'lure-fa' || status === 'random-fa') fas++;
+      else if (status === 'non-target') nonTargets++;
     });
   });
-  console.log(hits, misses, fas)
-  const totalTargets = hits + misses;
-  const totalNonTargets = totalTrials - totalTargets;
+
+  const totalNonTargets = nonTargets;
 
   // 3. Calculate d' (Sensitivity)
-  const dPrime = calculateDPrime(hits, misses, fas, totalNonTargets);
+  const dPrime = calculateDPrime(hits, misses, fas, nonTargets);
+  // Helper for the logs
+  const logDPrime = (label, hits, misses, fas, nonTargets) => {
+    const dp = calculateDPrime(hits, misses, fas, nonTargets);
+    const hitRate = ((hits / (hits + misses)) * 100).toFixed(1);
+    const faRate = ((fas / nonTargets) * 100).toFixed(1);
 
-  // 4. Retrieve Current Progress (Default to 0 if new)
-  // We assume 'levelProgress' is stored in settings. If not, we default to 0.
+    console.log(`--- ${label} ---`);
+    console.log(`Hit Rate: ${hitRate}% | FA Rate: ${faRate}%`);
+    console.log(`Resulting d': ${dp.toFixed(3)}`);
+
+    if (dp > 2.5) console.log("Status: 🚀 MASTERING (Fast Progress)");
+    else if (dp > 1.5) console.log("Status: ✅ STEADY (Small Progress)");
+    else if (dp >= 1.0) console.log("Status: 📈 EDGE (Maintenance/Hovering)");
+    else console.log("Status: ⚠️ STRUGGLING (Penalty)");
+    console.log("\n");
+  };
+
+  // Assuming a standard session of 40 trials: 10 matches, 30 non-matches
+  const T = 10;  // Total Targets
+  const N = 30;  // Total Non-Targets
+
+  console.log("%c D-PRIME PERFORMANCE BENCHMARKS", "color: #00ff00; font-weight: bold; font-size: 14px;");
+
+  // 1. Perfect Performance
+  logDPrime("Last Session", hits, misses, fas, totalNonTargets);
   let currentP = gameInfo.levelProgress || 0;
 
-  console.log(gameInfo)
 
   // 5. Update Progress based on Performance
-  // Thresholds: > 2.5 is "Flow State", < 1.0 is "Struggling"
-  if (dPrime >= 1.2) {
-    currentP += 0.05; // 5% progression boost
-  } else if (dPrime >= 0.8) {
-    currentP += 0.02; // Small boost for solid performance
-  } else if (dPrime < 0) {
-    currentP -= 0.02; // Small penalty for confusion
-  } else if (dPrime < -0.8) {
-    currentP -= 0.05; // Larger penalty for guessing/random clicking
+  // Optimized "Edge of Performance" Progression
+  if (dPrime >= 2.75) {
+    // Mastery: They are crushing it. Jump ahead.
+    currentP += 0.08;
+  } else if (dPrime >= 2.0) {
+    // Edge: This is the sweet spot. Moderate progress.
+    currentP += 0.04;
+  } else if (dPrime >= 1.5) {
+    // Maintenance: They are hanging on. Slow progress.
+    currentP += 0.01;
+  } else if (dPrime >= 1.0) {
+    // Buffer Zone: No progress, but no penalty. 
+    // They are at their limit but not failing.
+    currentP += 0;
+  } else if (dPrime < 1.0 && dPrime >= 0.5) {
+    // Slight Struggle: Gentle nudge back.
+    currentP -= 0.02;
+  } else {
+    // Failure/Guessing: Clear step back to regain confidence.
+    currentP -= 0.06;
   }
-  console.log(dPrime)
-  // Clamp progress to keep it sane (0.0 to 1.0)
   // Note: We allow it to hit 1.0, but the "Level Up" trigger is 0.8
   currentP = Math.max(0, Math.min(1.0, currentP));
 
   // 6. Check for Level Up (The 80% Bridge)
   // If progress >= 0.8, they have mastered the difficult version of this N-back
-  if (currentP >= 0.80) {
+  if (currentP >= 0.90) {
     const nextN = Math.min(gameInfo.nBack + 1, 12);
 
     // Only level up if we aren't already at max

@@ -30,7 +30,8 @@ const createAnalyticsStore = () => {
             if (answers[tag] === 'hit') {
               scores[tag].hits++
             } else {
-              scores[tag].misses++
+              if (answers[tag] !== 'non-target')
+                scores[tag].misses++
             }
           }
         }

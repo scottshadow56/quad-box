@@ -151,6 +151,8 @@ const detectMissedStimuli = () => {
       updates[tag] = 'late-failure'
     } else {
       // Reset visual state for non-active tags
+      if (!scoresheet[trialsIndex][tag])
+      scoresheet[trialsIndex][tag] = 'non-target'
       updates[tag] = 'blank'
     }
   }
