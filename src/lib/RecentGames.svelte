@@ -142,8 +142,7 @@
         <td class="whitespace-nowrap">{getTimeLabel(game.timestamp)}</td>
         <td class="font-medium">{getGameShortName(game)}</td>
 
-        <td class="text-center font-mono opacity-80">
-          {game.levelProgress ? game.levelProgress.toFixed(2) : '—'}
+        <td class="text-center font-mono opacity-80">{game.levelProgress ? game.nBack + game.levelProgress.toFixed(2).slice(1,4) : '—'}
         </td>
 
         <td class="text-center font-bold" style="color: {feedback.color}">
