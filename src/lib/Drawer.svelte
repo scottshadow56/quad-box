@@ -55,6 +55,15 @@ const getPositionWidthDisplay = () => {
     : $gameSettings.positionWidth
 }
 
+  const logDPrime = (dp) => {
+    if (dp === undefined || dp === null) return { text: '', icon: '' };
+  
+  if (dp > 2.5) return { text: 'Mastering', color: '#10b981' };
+  if (dp > 1.5) return { text: 'Steady', color: '#3b82f6' };
+  if (dp >= 1.0) return { text: 'The Edge', color: '#f59e0b' };
+  return { text: 'Struggling', color: '#6b7280' };
+  };
+$: feedback = logDPrime($scores.dp);
 onMount(() => {
   document.addEventListener('click', handleClickOutside)
   return () => {
@@ -66,9 +75,9 @@ onMount(() => {
 
 <div class="relative flex flex-col h-svh overflow-hidden">
   <div class="w-full h-16 lg:h-10 grid grid-cols-3 items-center bg-base-200 border-b-1 py-1 text-lg"
-  class:text-2xl={$mobile}
-  class:grid-cols-[1fr_3fr_1fr]={$mobile}
-  class:grid-cols-[3fr_2fr_3fr]={!$mobile}
+    class:text-2xl={$mobile}
+    class:grid-cols-[1fr_3fr_1fr]={$mobile}
+    class:grid-cols-[3fr_2fr_3fr]={!$mobile}
   >
     <div class="flex gap-2">
       <div on:click|stopPropagation={toggle} bind:this={panelButtonRef}>
@@ -79,32 +88,58 @@ onMount(() => {
         {/if}
       </div>
     </div>
+
     <div class="justify-self-center flex gap-4 select-none px-6 whitespace-nowrap max-w-[70svw] overflow-hidden"
       class:advance={$autoProgression.advance}
       class:fallback={$autoProgression.fallback}>
-      <div>N {$gameSettings.rules === 'variable' ? '≤' : '='} {$gameSettings.nBack}</div>
+      
+      <div>
+        N {$gameSettings.rules === 'variable' ? '≤' : '='} 
+        {(($gameSettings.nBack || 0) + ($scores.levelProgress || $gameSettings.levelProgress || 0)).toFixed(2)}
+      </div>
+
       {#if $settings.mode === 'tally'}
-      <div>W = {getPositionWidthDisplay()}</div>
+        <div>W = {getPositionWidthDisplay()}</div>
       {/if}
+      
       <div>{$title.toUpperCase()}</div>
-      {#if $scores.total && $mobile}
-        <div>{($scores.total.percent * 100).toFixed(0)}%</div>
-        {#if $scores.total.averageTrialTime}
-          <div>{($scores.total.averageTrialTime / 1000).toFixed(2)}s/t</div>
-        {/if}
+
+      {#if $scores.dp && $mobile}
+        <div class="flex items-center gap-2 border-l border-white/10 pl-2 " style="color: {feedback.color}">
+          <div class="text-base">d':{$scores.dp.toFixed(1)}</div>
+          {#if $scores.total.averageTrialTime}
+            <div class="text-xs text-gray-400">
+              {($scores.total.averageTrialTime / 1000).toFixed(2)}s
+            </div>
+          {/if}
+        </div>
       {/if}
     </div>
-    <div class="justify-self-end flex items-center gap-4 pr-2 whitespace-nowrap">
+
+    <div class="justify-self-end flex items-center gap-4 pr-2 whitespace-nowrap text-sm">
       {#if !$isPlaying && !$mobile && $analytics.playTime}
-      <div>Today: {$analytics.playTime}</div>
+        <div class="text-gray-400">Today: {$analytics.playTime}</div>
       {/if}
-      {#if $scores.total && !$isPlaying && !$mobile}
-        <div>Last: {($scores.total.percent * 100).toFixed(0)}%</div>
-        {#if $scores.total.averageTrialTime}
-          <div>{($scores.total.averageTrialTime / 1000).toFixed(2)}s/t</div>
-        {/if}
+
+      {#if $scores.dp !== undefined && !$isPlaying && !$mobile}
+        <div class="flex items-center gap-2 font-medium" >
+          <span>Last: d' <span class="font-bold text-white" style="color: {feedback.color}">{$scores.dp.toFixed(2)}</span></span>
+          
+          <div class="flex items-center gap-1 px-2 py-0.5 rounded bg-white/5 border border-white/10" style="color: {feedback.color}">
+            <span>
+              {feedback.text}
+            </span>
+          </div>
+
+          {#if $scores.total.averageTrialTime}
+            <div class="text-gray-400 border-l border-white/20 pl-2">
+              {($scores.total.averageTrialTime / 1000).toFixed(2)}s/t
+            </div>
+          {/if}
+        </div>
       {/if}
-      <div class="flex">
+
+      <div class="flex items-center">
         <InfoPopup />
         <ChartPopup />
       </div>
@@ -116,7 +151,7 @@ onMount(() => {
       bind:this={drawerRef}
       class="absolute top-0 left-0 h-full overflow-y-auto w-86 sm:w-80 bg-base-200 border-r-1 shadow-lg transform transition-transform duration-150 z-50"
       class:-translate-x-86={!open} class:sm:-translate-x-80={!open}
-      >
+    >
       <div class="flex w-full flex-col px-4 gap-2">
         <div class="text-xl font-semibold flex justify-between items-center pt-4">
           <span>Settings</span>

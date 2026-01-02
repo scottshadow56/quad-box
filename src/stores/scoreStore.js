@@ -13,6 +13,7 @@ const createScoreStore = () => {
     set({
       ...$analytics.lastGame.scores,
       total: $analytics.lastGame.total,
+      dp: $analytics.lastGame.dp
     })
   })
 

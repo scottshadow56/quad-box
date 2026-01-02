@@ -107,7 +107,14 @@
     }
     return game.title.charAt(0).toUpperCase() + game.nBack + 'B'
   }
-
+    const logDPrime = (dp) => {
+    if (dp === undefined || dp === null) return { text: '', icon: '' };
+  
+  if (dp > 2.5) return { text: 'Mastering', color: '#10b981' };
+  if (dp > 1.5) return { text: 'Steady', color: '#3b82f6' };
+  if (dp >= 1.0) return { text: 'The Edge', color: '#f59e0b' };
+  return { text: 'Struggling', color: '#6b7280' };
+  };
   $: filteredGames = $recentGamesState.filter === "completed" ? games.filter(game => game.status === "completed") : games.filter(game => ['completed', 'cancelled'].includes(game.status))
 </script>
 
@@ -116,7 +123,8 @@
     <tr>
       <th>Date</th>
       <th>Game</th>
-      <th class="text-center">Total</th>
+      <th class="text-center">Level</th>
+      <th class="text-center">Perf</th>
       <th class="text-center">Position</th>
       <th class="text-center">Audio</th>
       <th class="text-center">Color</th>
@@ -129,19 +137,32 @@
   </thead>
   <tbody>
     {#each filteredGames as game (game.id)}
+      {@const feedback = logDPrime(game?.dp)}
       <tr>
-        <td>{getTimeLabel(game.timestamp)}</td>
-        <td>{getGameShortName(game)}</td>
-        <td class="text-center border-r-1 border-[#FFFFFF22]"><span class={'py-1 px-2 ' + getPercentClass(game?.total?.percent)}>{formatPercent(game?.total?.percent)}</span></td>
+        <td class="whitespace-nowrap">{getTimeLabel(game.timestamp)}</td>
+        <td class="font-medium">{getGameShortName(game)}</td>
+
+        <td class="text-center font-mono opacity-80">
+          {game.levelProgress ? game.levelProgress.toFixed(2) : '—'}
+        </td>
+
+        <td class="text-center font-bold" style="color: {feedback.color}">
+          <span class="view-pc">{game.dp?.toFixed(2) ?? '—' }</span>
+          <span class="view-mobile">{game.dp?.toFixed(2) ?? '—'}</span>
+        </td>
+
+
         <td class="text-center"><span class={'text-sm px-1 ' + getPercentClass(game?.scores?.position?.percent)}>{formatPercent(game?.scores?.position?.percent)}</span></td>
         <td class="text-center"><span class={'text-sm px-1 ' + getPercentClass(game?.scores?.audio?.percent)}>{formatPercent(game?.scores?.audio?.percent)}</span></td>
         <td class="text-center"><span class={'text-sm px-1 ' + getPercentClass(game?.scores?.color?.percent)}>{formatPercent(game?.scores?.color?.percent)}</span></td>
         <td class="text-center"><span class={'text-sm px-1 ' + getPercentClass(game?.scores?.shapeColor?.percent ?? game?.scores?.image?.percent ?? game?.scores?.shape?.percent)}>{formatPercent(game?.scores?.shapeColor?.percent ?? game?.scores?.image?.percent ?? game?.scores?.shape?.percent)}</span></td>
+
         {#if game.title.startsWith('tally') || game.title.startsWith('vtally')}
-          <td>{formatSeconds(game.elapsedSeconds) + ' | ' + (game.total.averageTrialTime / 1000).toFixed(2) + 's/t'}</td>
+          <td class="whitespace-nowrap">{formatSeconds(game.elapsedSeconds)} <span class="text-xs opacity-50">| {(game.total.averageTrialTime / 1000).toFixed(2)}s/t</span></td>
         {:else}
           <td>{formatSeconds(game.elapsedSeconds)}</td>
         {/if}
+
         {#if $recentGamesState.filter !== "completed"}
           <td><span class={getStatusClass(game.status)}>{game.status}</span></td>
         {/if}
@@ -149,3 +170,17 @@
     {/each}
   </tbody>
 </table>
+
+<style>
+  /* Toggle logic for the Perf column */
+  .view-pc { display: inline; }
+  .view-mobile { display: none; }
+
+  @media (max-width: 768px) {
+    .view-pc { display: none; }
+    .view-mobile { 
+      display: inline; 
+      font-size: 0.8rem;
+    }
+  }
+</style>

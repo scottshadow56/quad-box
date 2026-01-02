@@ -65,31 +65,6 @@ export const runAutoProgression = async (gameInfo, scoresheet) => {
 
   // 3. Calculate d' (Sensitivity)
   const dPrime = calculateDPrime(hits, misses, fas, nonTargets);
-  // Helper for the logs
-  const logDPrime = (label, hits, misses, fas, nonTargets) => {
-    const dp = calculateDPrime(hits, misses, fas, nonTargets);
-    const hitRate = ((hits / (hits + misses)) * 100).toFixed(1);
-    const faRate = ((fas / nonTargets) * 100).toFixed(1);
-
-    console.log(`--- ${label} ---`);
-    console.log(`Hit Rate: ${hitRate}% | FA Rate: ${faRate}%`);
-    console.log(`Resulting d': ${dp.toFixed(3)}`);
-
-    if (dp > 2.5) console.log("Status: 🚀 MASTERING (Fast Progress)");
-    else if (dp > 1.5) console.log("Status: ✅ STEADY (Small Progress)");
-    else if (dp >= 1.0) console.log("Status: 📈 EDGE (Maintenance/Hovering)");
-    else console.log("Status: ⚠️ STRUGGLING (Penalty)");
-    console.log("\n");
-  };
-
-  // Assuming a standard session of 40 trials: 10 matches, 30 non-matches
-  const T = 10;  // Total Targets
-  const N = 30;  // Total Non-Targets
-
-  console.log("%c D-PRIME PERFORMANCE BENCHMARKS", "color: #00ff00; font-weight: bold; font-size: 14px;");
-
-  // 1. Perfect Performance
-  logDPrime("Last Session", hits, misses, fas, totalNonTargets);
   let currentP = gameInfo.levelProgress || 0;
 
 
