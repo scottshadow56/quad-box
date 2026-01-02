@@ -76,7 +76,6 @@
 }
 
   const getDailyAveragesByTitle = (games) => {
-    console.log(games)
   const grouped = {}
 
   for (const { scores, levelProgress, nBack, title, dayTimestamp } of games) {
