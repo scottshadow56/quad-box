@@ -77,22 +77,19 @@
 
   const getDailyAveragesByTitle = (games) => {
   const grouped = {}
-
-  for (const { scores, levelProgress, nBack, title, dayTimestamp } of games) {
+  for (const { dp, levelProgress, nBack, title, dayTimestamp } of games) {
     if (!title) continue
-    const dp = scores?.dp || 0 + nBack;
-
     if (!grouped[title]) grouped[title] = {}
     if (!grouped[title][dayTimestamp]) grouped[title][dayTimestamp] = { dps: [], levels: [] }
 
     grouped[title][dayTimestamp].dps.push(dp)
-    grouped[title][dayTimestamp].levels.push(levelProgress || 0)
+    grouped[title][dayTimestamp].levels.push(levelProgress + nBack || 0)
   }
-
+  console.log(grouped)
   const datasets = []
 
   Object.entries(grouped).forEach(([title, dayGroup]) => {
-    const color = getColorFromTitle(title);
+    const color = getColorFromTitle(title)
     
     const dpData = []
     const lvData = []
