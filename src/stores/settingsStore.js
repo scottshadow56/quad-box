@@ -2,7 +2,6 @@ import { writable } from 'svelte/store'
 import { migrateSettings } from '../migrations/migrations'
 
 const STORAGE_KEY = 'quad-box-settings'
-
 const defaultSettings = {
   version: "v3",
   mode: 'quad',
@@ -19,11 +18,11 @@ const defaultSettings = {
       enableShape: true,
       enableColor: true,
       enableImage: false,
-      grid: 'rotate3D',
+      grid: 'static2D',
       rules: 'none',
       audioSource: 'letters2',
-      colorSource: 'basic',
-      shapeSource: 'basic',
+      colorSource: 'voronoi',
+      shapeSource: 'all',
       imageSource: 'voronoi',
     },
     dual: {
@@ -37,7 +36,7 @@ const defaultSettings = {
       enableShape: false,
       enableColor: false,
       enableImage: false,
-      grid: 'rotate3D',
+      grid: 'static2D',
       rules: 'none',
       audioSource: 'letters2',
       colorSource: 'basic',
@@ -158,11 +157,13 @@ const deepMerge = (target, source) => {
 
   return Array.isArray(source) ? source.slice() : source
 }
+console.log(defaultSettings)
 
 const loadSettings = () => {
   if (typeof localStorage === 'undefined') return getDefaultSettings()
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
+
     let savedSettings = raw ? JSON.parse(raw) : {}
     savedSettings = migrateSettings(savedSettings)
     return deepMerge(getDefaultSettings(), savedSettings)

@@ -85,7 +85,6 @@
     grouped[title][dayTimestamp].dps.push(dp)
     grouped[title][dayTimestamp].levels.push(levelProgress + nBack || 0)
   }
-  console.log(grouped)
   const datasets = []
 
   Object.entries(grouped).forEach(([title, dayGroup]) => {
