@@ -73,17 +73,17 @@ export const runAutoProgression = async (gameInfo, scoresheet) => {
   if (dPrime >= 2.75) {
     // Mastery: They are crushing it. Jump ahead.
     currentP += 0.08;
-  } else if (dPrime >= 2.0) {
+  } else if (dPrime >= 2.2) {
     // Edge: This is the sweet spot. Moderate progress.
     currentP += 0.04;
-  } else if (dPrime >= 1.5) {
+  } else if (dPrime >= 1.7) {
     // Maintenance: They are hanging on. Slow progress.
     currentP += 0.01;
-  } else if (dPrime >= 1.0) {
+  } else if (dPrime >= 1.2) {
     // Buffer Zone: No progress, but no penalty. 
     // They are at their limit but not failing.
     currentP += 0;
-  } else if (dPrime < 1.0 && dPrime >= 0.5) {
+  } else if (dPrime < 1.2 && dPrime >= 0.5) {
     // Slight Struggle: Gentle nudge back.
     currentP -= 0.02;
   } else {
