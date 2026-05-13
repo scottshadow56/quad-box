@@ -314,6 +314,23 @@ export const SYL_10_AUDIO_POOL = [
   `${SYL_10_PATH}u`,
 ]
 
+const PIANO_PATH = "piano/"
+export const PIANO_AUDIO_POOL = [
+  `${PIANO_PATH}a4`,
+  `${PIANO_PATH}ab4`,
+  `${PIANO_PATH}b4`,
+  `${PIANO_PATH}bb4`,
+  `${PIANO_PATH}c4`,
+  `${PIANO_PATH}d4`,
+  `${PIANO_PATH}db4`,
+  `${PIANO_PATH}e4`,
+  `${PIANO_PATH}eb4`,
+  `${PIANO_PATH}f4`,
+  `${PIANO_PATH}g4`,
+  `${PIANO_PATH}gb4`,
+]
+
+
 export const getAudioPool = (audioSource) => {
   switch (audioSource) {
     case 'letters':
@@ -334,6 +351,8 @@ export const getAudioPool = (audioSource) => {
       return SYL_5_AUDIO_POOL
     case 'syl10':
       return SYL_10_AUDIO_POOL
+    case 'piano':
+      return PIANO_AUDIO_POOL
     default:
       return LETTER_M1_AUDIO_POOL
   }

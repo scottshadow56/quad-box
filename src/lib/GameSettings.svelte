@@ -98,6 +98,7 @@
     ['nato','NATO'],
     ['syl5','5 syllables'],
     ['syl10','10 syllables'],
+    ['piano', 'Piano'],
   ])
   const shapeOptions = new Map([
     ['basic', 'Basic'],
